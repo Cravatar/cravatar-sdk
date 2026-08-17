@@ -1,0 +1,29 @@
+{
+  "name": "@cravatar/sdk",
+  "version": "1.0.0",
+  "description": "Client SDK for the public Cravatar /avatar/ API",
+  "type": "module",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": [
+    "src",
+    "php/src",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "test:php": "php php/tests/run.php",
+    "consumer": "node scripts/consumer-check.mjs",
+    "live": "node scripts/live-110.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://feicode.com/Cravatar/cravatar-sdk.git"
+  }
+}

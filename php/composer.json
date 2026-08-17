@@ -1,0 +1,11 @@
+{
+  "name": "cravatar/sdk",
+  "description": "PHP client for the public Cravatar /avatar/ API",
+  "type": "library",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Cravatar\\Sdk\\": "src/"
+    }
+  }
+}
