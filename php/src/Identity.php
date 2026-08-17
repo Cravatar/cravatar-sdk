@@ -27,6 +27,16 @@ final class Identity
         return $digits;
     }
 
+    public static function isMainlandMobile(string $digits): bool
+    {
+        return (bool) preg_match('/^1\d{10}$/', $digits);
+    }
+
+    public static function looksLikeHash(string $raw): bool
+    {
+        return (bool) preg_match('/^(?:[a-f0-9]{32}|[a-f0-9]{64})$/i', trim($raw));
+    }
+
     public static function normalizeNumber(string $raw): string
     {
         $num = self::digitsOnly($raw);
@@ -35,6 +45,9 @@ final class Identity
         }
         $stripped = self::stripCountryCode($num);
         if (strlen($stripped) >= 3 && strlen($stripped) <= 6) {
+            return $stripped;
+        }
+        if (self::isMainlandMobile($stripped)) {
             return $stripped;
         }
 
@@ -51,6 +64,9 @@ final class Identity
 
     public static function normalizeIdentity(string $raw, string $kind = 'auto'): string
     {
+        if ($kind === 'hash' || ($kind === 'auto' && self::looksLikeHash($raw))) {
+            return strtolower(trim($raw));
+        }
         if ($kind === 'email' || ($kind === 'auto' && str_contains($raw, '@'))) {
             return self::normalizeEmail($raw);
         }

@@ -4,6 +4,7 @@ import { test } from 'node:test';
 import {
   CN_HOST,
   DEFAULT_HOST,
+  HK_HOST,
   avatarUrl,
   clampSize,
   hashIdentity,
@@ -53,4 +54,16 @@ test('forceDefault and size aliases match origin knobs', () => {
 test('empty identity yields empty URL', () => {
   assert.equal(avatarUrl(''), '');
   assert.equal(avatarUrl('abc', { kind: 'number' }), '');
+});
+
+test('already-hashed digest is not re-hashed in auto mode', () => {
+  const digest = hashIdentity(normalizeNumber('110'));
+  const url = avatarUrl(digest, { s: 80 });
+  assert.ok(url.includes('/avatar/' + digest + '?'));
+  assert.ok(url.startsWith(DEFAULT_HOST));
+});
+
+test('hk host alias', () => {
+  const url = avatarUrl('110', { kind: 'number', host: 'hk' });
+  assert.ok(url.startsWith(HK_HOST + '/avatar/'));
 });

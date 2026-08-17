@@ -10,18 +10,18 @@ Origin: `https://cravatar.com` (optional host `cn` → `https://cn.cravatar.com`
 |---|---|---|
 | **Email** | `trim` + lowercase | `md5` or `sha256` of that string |
 | **Public-service number** | digits only; strip `86` / `0086` / `086` **only when the remainder is 3–6 digits** (`110`, `12345`, `10086`) | same hash |
-| **Personal 11-digit mobile** | digits only; **not** treated as a listed service number (no `86` strip into a short id) | you may still hash it; origin will not show a service badge |
+| **Personal 11-digit mobile** | digits only; `+86`/`0086` stripped when the remainder is `1` + 10 digits; **not** a listed service number | you may still hash the 11 digits; origin will not show a service badge |
 
 The 44-number catalog lives on the origin. This client does not need that list to build a URL.
 
 ## Install
 
 ```bash
-# from FeiCode
 git clone https://feicode.com/Cravatar/cravatar-sdk.git
+# or: npm install git+ssh://git@feicode.com:2222/Cravatar/cravatar-sdk.git
 ```
 
-Node 18+:
+Works in Node and in browsers (no `node:crypto` import). Default hash is portable md5.
 
 ```js
 import { avatarUrl, isPublicServiceNumber, normalizeEmail, normalizeNumber } from '@cravatar/sdk';
@@ -49,7 +49,7 @@ echo Cravatar\Sdk\Url::avatar('+86 110', ['kind' => 'number', 'size' => 256]);
 | `rating` / `r` | `?r=` | `g`, `pg`, `r`, `x` |
 | `format` | `/{hash}.png` | `webp`, `png`, `jpeg`, `gif`, `avif` |
 | `algorithm` | hash length | `md5` (32) or `sha256` (64) |
-| `host` | hostname | default apex; `'cn'` for the China edge |
+| `host` | hostname | default apex; `'cn'` / `'hk'` / `'en'` / `'www'` |
 
 ## Tests
 

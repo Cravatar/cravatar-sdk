@@ -8,6 +8,8 @@ final class Url
 {
     public const DEFAULT_HOST = 'https://cravatar.com';
     public const CN_HOST = 'https://cn.cravatar.com';
+    public const HK_HOST = 'https://hk.cravatar.com';
+    public const EN_HOST = 'https://en.cravatar.com';
 
     /** @var list<string> */
     private const FORMATS = ['webp', 'avif', 'jpeg', 'jpg', 'png', 'gif'];
@@ -17,10 +19,20 @@ final class Url
 
     public static function resolveHost(string $host): string
     {
-        if ($host === 'cn' || $host === 'cn.cravatar.com') {
+        $key = preg_replace('#^https?://#', '', rtrim($host, '/')) ?? $host;
+        if ($key === 'cn' || $key === 'cn.cravatar.com') {
             return self::CN_HOST;
         }
-        if ($host === '' || $host === 'default' || $host === 'cravatar.com') {
+        if ($key === 'hk' || $key === 'hk.cravatar.com') {
+            return self::HK_HOST;
+        }
+        if ($key === 'en' || $key === 'en.cravatar.com') {
+            return self::EN_HOST;
+        }
+        if ($key === 'www' || $key === 'www.cravatar.com') {
+            return 'https://www.cravatar.com';
+        }
+        if ($key === '' || $key === 'default' || $key === 'cravatar.com') {
             return self::DEFAULT_HOST;
         }
 
@@ -42,7 +54,7 @@ final class Url
     {
         $kind = $options['kind'] ?? 'auto';
         $algorithm = ($options['algorithm'] ?? 'md5') === 'sha256' ? 'sha256' : 'md5';
-        if ($kind === 'hash') {
+        if ($kind === 'hash' || ($kind === 'auto' && Identity::looksLikeHash($raw))) {
             $hash = strtolower(trim($raw));
         } else {
             $hash = Hash::identity(Identity::normalizeIdentity($raw, $kind), $algorithm);

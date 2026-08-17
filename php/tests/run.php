@@ -34,6 +34,8 @@ check('110 is public service', Identity::isPublicServiceNumber('+86 110') === tr
 $mobile = Identity::normalizeNumber('13800138000');
 check('11-digit mobile stays 11 digits', $mobile === '13800138000');
 check('11-digit mobile is not public service', Identity::isPublicServiceNumber('13800138000') === false);
+check('+86 11-digit strips to local mobile', Identity::normalizeNumber('+86 13800138000') === '13800138000');
+check('+86 mobile is not public service', Identity::isPublicServiceNumber('+86 13800138000') === false);
 
 $url = Url::avatar('User@Example.COM', ['kind' => 'email', 'size' => 128]);
 $digest = Hash::identity(Identity::normalizeEmail('User@Example.COM'));

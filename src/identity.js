@@ -23,6 +23,14 @@ export function stripCountryCode(digits) {
   return num;
 }
 
+export function isMainlandMobile(digits) {
+  return /^1\d{10}$/.test(String(digits ?? ''));
+}
+
+export function looksLikeHash(raw) {
+  return /^(?:[a-f0-9]{32}|[a-f0-9]{64})$/i.test(String(raw ?? '').trim());
+}
+
 export function normalizeNumber(raw) {
   const num = digitsOnly(raw);
   if (num === '') {
@@ -30,6 +38,9 @@ export function normalizeNumber(raw) {
   }
   const stripped = stripCountryCode(num);
   if (stripped.length >= 3 && stripped.length <= 6) {
+    return stripped;
+  }
+  if (isMainlandMobile(stripped)) {
     return stripped;
   }
   return num;
@@ -43,6 +54,9 @@ export function isPublicServiceNumber(raw) {
 
 export function normalizeIdentity(raw, kind = 'auto') {
   const text = String(raw ?? '');
+  if (kind === 'hash' || (kind === 'auto' && looksLikeHash(text))) {
+    return String(text).trim().toLowerCase();
+  }
   if (kind === 'email' || (kind === 'auto' && text.includes('@'))) {
     return normalizeEmail(text);
   }

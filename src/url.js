@@ -1,18 +1,33 @@
 import { hashIdentity } from './hash.js';
-import { normalizeIdentity } from './identity.js';
+import { looksLikeHash, normalizeIdentity } from './identity.js';
 
 export const DEFAULT_HOST = 'https://cravatar.com';
 export const CN_HOST = 'https://cn.cravatar.com';
+export const HK_HOST = 'https://hk.cravatar.com';
+export const EN_HOST = 'https://en.cravatar.com';
 
 const FORMATS = new Set(['webp', 'avif', 'jpeg', 'jpg', 'png', 'gif']);
 const RATINGS = new Set(['g', 'pg', 'r', 'x']);
 
 export function resolveHost(host) {
-  if (host === 'cn' || host === 'cn.cravatar.com') {
+  const key = String(host ?? '').replace(/^https?:\/\//, '').replace(/\/$/, '');
+  if (key === 'cn' || key === 'cn.cravatar.com') {
     return CN_HOST;
   }
-  if (!host || host === 'default' || host === 'cravatar.com') {
+  if (key === 'hk' || key === 'hk.cravatar.com') {
+    return HK_HOST;
+  }
+  if (key === 'en' || key === 'en.cravatar.com') {
+    return EN_HOST;
+  }
+  if (key === 'www' || key === 'www.cravatar.com') {
+    return 'https://www.cravatar.com';
+  }
+  if (!key || key === 'default' || key === 'cravatar.com') {
     return DEFAULT_HOST;
+  }
+  if (/^https?:\/\//i.test(String(host))) {
+    return String(host).replace(/\/$/, '');
   }
   return String(host).replace(/\/$/, '');
 }
@@ -47,7 +62,7 @@ export function avatarUrl(raw, options = {}) {
   const kind = options.kind ?? 'auto';
   const algorithm = options.algorithm === 'sha256' ? 'sha256' : 'md5';
   let hash;
-  if (kind === 'hash') {
+  if (kind === 'hash' || (kind === 'auto' && looksLikeHash(raw))) {
     hash = String(raw ?? '').toLowerCase().trim();
   } else {
     const identity = normalizeIdentity(raw, kind);
